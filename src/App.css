@@ -18,7 +18,7 @@ body{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 .app__stats{
   display: flex;
@@ -36,6 +36,13 @@ body{
   color: blue;
   border-radius: 20px;
   box-shadow: 2px;
+}
+.map-app{
+  width: 850px;
+  height: 68opx;
+  padding: 1rem;
+  margin-top: 10px;
+  border-radius: 20px;
 }
 
 
