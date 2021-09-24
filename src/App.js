@@ -12,7 +12,8 @@ import "leaflet/dist/leaflet.css"
 function App() {
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState("worldwide");
-  const [countryInfo, setCountryInfo] = useState("worldwide");
+  const [worldwide, setWorldwide] = useState("worldwide");
+  const [countryInfo, setCountryInfo] = useState({});
   const [tableData, setTableData] = useState([])
   const [mapCenter, setMapCenter] = useState({ lat: 34.80746, lng: -40.4796 })
   const [mapZoom, setMapZoom] = useState(3)
@@ -67,17 +68,31 @@ function App() {
 
   const onCountryChange = async (event) => {
     const countryCode = event.target.value;
-    //setCountry(countryCode);
-    const url = (countryCode === "worldwide")
+    setCountry(countryCode)
+    console.log("cont", countryCode);
+    console.log("contr", country);
+    setCountry(countryCode)
+    console.log("contrr", country);
+    const url = (countryCode === "worldwide" || country === "worldwide")
       ? "https://disease.sh/v3/covid-19/all"
       : `https://disease.sh/v3/covid-19/countries/${country}`
+
     await fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        setCountry(countryCode);
-        setCountryInfo(data)
-        setMapCenter([data.countryInfo.lat, data.countryInfo.long])
-        setMapZoom(4)
+        if (url === "https://disease.sh/v3/covid-19/all") {
+          setCountryInfo(data)
+          setMapCenter({ lat: 34.80746, lng: -40.4796 })
+          return setCountry(countryCode)
+        } else {
+
+          setCountryInfo(data)
+          console.log("contr", country);
+          setMapCenter({ lat: data.countryInfo.lat, lng: data.countryInfo.long })
+          setMapZoom(4)
+          console.log("data", data);
+          return
+        }
       })
   }
 
@@ -94,7 +109,7 @@ function App() {
               <MenuItem value="worldwide">Worldwide</MenuItem>
               {
                 countries.map(country => (
-                  <MenuItem value={country.value}>{country.name} </MenuItem>
+                  <MenuItem value={country.name}>{country.name} </MenuItem>
 
                 ))
               }
@@ -103,20 +118,20 @@ function App() {
         </div>
         <div className="app__stats">
           <InfoBox
-            onClick={e => setCasesType("cases")}
+            onClick={(e) => setCasesType("cases")}
             title="Coronavirus cases"
             cases={prettyPrintStat(countryInfo.todayCases)}
-            total={countryInfo.cases} />
+            total={prettyPrintStat(countryInfo.cases)} />
           <InfoBox
-            onClick={e => setCasesType("recovered")}
+            onClick={(e) => setCasesType("recovered")}
             title="Recovered"
             cases={prettyPrintStat(countryInfo.todayRecovered)}
-            total={countryInfo.recovered} />
+            total={prettyPrintStat(countryInfo.recovered)} />
           <InfoBox
-            onClick={e => setCasesType("deaths")}
+            onClick={(e) => setCasesType("deaths")}
             title="Deaths"
             cases={prettyPrintStat(countryInfo.todayDeaths)}
-            total={countryInfo.deaths} />
+            total={prettyPrintStat(countryInfo.deaths)} />
         </div>
         <div>
           <Map
@@ -138,7 +153,7 @@ function App() {
           <Table countries={tableData} />
 
           <h3>Worldwide new cases</h3>
-          <Linegraph />
+          <Linegraph casesType={casesType} />
 
         </CardContent>
       </Card>

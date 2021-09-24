@@ -3,7 +3,7 @@
 }
 body{
   background-color:lightgray;
-  justify-content: space-between;
+ 
 }
 .app__left{
   flex: 0.9;
